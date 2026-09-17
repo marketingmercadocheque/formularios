@@ -569,6 +569,24 @@ body.neutral{--accent-text:var(--accent)}
 .is-fluid .chip.solo .chip-sub,.is-fluid .lg-cap .chip .chip-sub{flex-basis:100%;margin-left:0}
 .is-fluid .chip.solo{align-self:stretch}
 .is-fluid .chart{flex:none}
+
+/* Mensaje post-descarga en pantallas chicas o celular acostado */
+@media (max-height: 640px), (max-width: 360px){
+  .dlg-body{padding:18px 18px 16px;gap:8px}
+  .dlg-icon{display:none}
+  .done-dlg h2{font-size:17px;margin:0}
+  .dlg-text{font-size:13px;line-height:1.5}
+  .dlg-file{font-size:11px;margin-top:4px}
+  .dlg-steps li{padding:7px 10px;gap:10px}
+  .dlg-steps .step-n{width:24px;height:24px;font-size:11px}
+  .dlg-actions{margin-top:4px;gap:8px}
+  .dlg-actions .dl,.dlg-actions .btn-2{height:42px;font-size:13px;padding:0 14px}
+}
+@media (max-height: 460px){
+  .dlg-steps,.dlg-file{display:none}
+  .dlg-actions .dl{flex:2 1 auto}
+  .dlg-actions .btn-2{flex:1 1 auto}
+}
 </style>
 </head>
 <body>
@@ -1309,7 +1327,7 @@ function fitAll(root = document) {
 const sumCol = (name, col) => tableRows(name).reduce((a, row) => a + parseNum(row[col]), 0);
 const nv = k => parseNum(S.v[k]);
 const pctFmt = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-const compactFmt = new Intl.NumberFormat('es-AR', { notation: 'compact', maximumFractionDigits: 1 });
+const compactFmt = new Intl.NumberFormat('es-AR', { notation: 'compact', maximumFractionDigits: 2 });
 let O = {};
 
 function compute() {
@@ -1642,7 +1660,9 @@ function showDone(doc, fileName, getOpener) {
   }, { once: true });
   dlg.showModal();
   const first = dlg.querySelector('[data-dlg-actions] button');
-  if (first) first.focus();
+  if (first) first.focus({ preventScroll: true });
+  dlg.scrollTop = 0;                                   // que siempre se lea desde el título
+  requestAnimationFrame(() => { dlg.scrollTop = 0; });
 }
 
 /* Cualquier cambio después de descargar deja el PDF desactualizado */
